@@ -1,54 +1,52 @@
-# Github Sync
+# Git Sync
 
-A GitHub Action for syncing the current repository using **force push**. 
+A GitHub Action for syncing between two independent repositories using **force push**. 
 
 
 ## Features
- * Sync branches between two Github repositories
- * Sync branches from a remote repository
- * Github action can be triggered on a timer or on push
- * To push to a remote repository, please checkout [wei/git-sync](https://github.com/marketplace/actions/git-sync-action)
+ * Sync branches between two GitHub repositories
+ * Sync branches to/from a remote repository
+ * GitHub action can be triggered on a timer or on push
+ * To sync with current repository, please checkout [Github Repo Sync](https://github.com/marketplace/actions/github-repo-sync)
 
 
 ## Usage
 
-### Github Actions
+Always make a full backup of your repo (`git clone --mirror`) before using this action.
+
+### GitHub Actions
 ```
 # File: .github/workflows/repo-sync.yml
 
-on:
-  schedule:
-  - cron:  "*/15 * * * *"
+on: push
 jobs:
   repo-sync:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
     - name: repo-sync
-      uses: wei/github-sync@v1
-      env:
-        SOURCE_REPO: ""
-        SOURCE_BRANCH: ""
-        DESTINATION_BRANCH: ""
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: wei/git-sync@v2
       with:
-        args: $SOURCE_REPO $SOURCE_BRANCH:$DESTINATION_BRANCH
+        source_repo: ""
+        source_branch: ""
+        destination_repo: ""
+        destination_branch: ""
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
-If `SOURCE_REPO` is private or with another provider, either (1) use an authenticated HTTPS repo clone url like `https://username:access_token@github.com/username/repository.git` or (2) set a `SSH_PRIVATE_KEY` secret and use the SSH clone url
+`ssh_private_key` can be omitted if using authenticated HTTPS repo clone urls like `https://username:access_token@github.com/username/repository.git`.
 
+#### Advanced: Sync all branches
 
-## Known Issue
-The job may fail if upstream has a workflow file present. Consider using [git-sync](https://github.com/wei/git-sync) instead.
+To Sync all branches from source to destination, use `source_branch: "refs/remotes/source/*"` and `destination_branch: "refs/heads/*"`. But be careful, branches with the same name including `master` will be overwritten.
 
+#### Advanced: Sync all tags
 
-## Advanced Usage: Sync all branches
-1. Make a backup
-2. Create a new branch in your repo (destination repo), it should not share the name with any branch in source repo
-3. Make the new branch the default branch under repo settings
-4. Use `*:*` in place of `$SOURCE_BRANCH:$DESTINATION_BRANCH`
+To Sync all tags from source to destination, use `source_branch: "refs/tags/*"` and `destination_branch: "refs/tags/*"`. But be careful, tags with the same name will be overwritten.
 
-This will force sync ALL branches to match source repo. Branches that are created only in the destination repo will not be affected but all the other branches will be *hard reset* to match source repo. ⚠️ This does mean if upstream ever creates a branch that shares the name, your changes will be gone.
-
+### Docker
+```
+docker run --rm -e "SSH_PRIVATE_KEY=$(cat ~/.ssh/id_rsa)" $(docker build -q .) \
+  $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
+```
 
 ## Author
 [Wei He](https://github.com/wei) _github@weispot.com_
