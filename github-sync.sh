@@ -23,11 +23,11 @@ fi
 echo "UPSTREAM_REPO=$UPSTREAM_REPO"
 echo "BRANCHES=$BRANCH_MAPPING"
 
-git config --unset-all http."https://github.com/".extraheader
+# Github actions no longer auto set the username and GITHUB_TOKEN
 git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
 git remote add tmp_upstream "$UPSTREAM_REPO"
 git fetch tmp_upstream
-git remote --verbose
-git push origin "refs/remotes/tmp_upstream/${BRANCH_MAPPING%%:*}:refs/heads/${BRANCH_MAPPING#*:}" --force
+git remote -v
+git push origin "refs/remotes/tmp_upstream/${BRANCH_MAPPING%%:*}:refs/heads/${BRANCH_MAPPING#*:}" -f
 git remote rm tmp_upstream
-git remote --verbose
+git remote -v
