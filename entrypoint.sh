@@ -12,4 +12,5 @@ fi
 mkdir -p ~/.ssh
 cp /root/.ssh/* ~/.ssh/ 2> /dev/null || true 
 
+chmod 777 /git-sync.sh
 sh -c "/git-sync.sh $*"
