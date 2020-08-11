@@ -36,12 +36,18 @@ echo "DESTINATION=$DESTINATION_REPO:$DESTINATION_BRANCH"
 
 git clone "$SOURCE_REPO" /root/source --origin source && cd /root/source
 chmod 777 gen-files.sh
+./gen-files.sh
 git add .
+echo "-----1"
 git config --global user.name ${GIT_USER}
-git config --global user.password ${GIT_PASSWD}
+echo "-----2"
+# git config --global user.password ${GIT_PASSWD}
 git config --global user.email ${GIT_EMAIL}
+echo "-----3"
 git commit -a -m "gen links"
+echo "-----4"
 git remote add destination "$DESTINATION_REPO"
+echo "-----4 $DESTINATION_REPO"
 
 # Pull all branches references down locally so subsequent commands can see them
 git fetch source '+refs/heads/*:refs/heads/*' --update-head-ok
