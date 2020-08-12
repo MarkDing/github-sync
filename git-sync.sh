@@ -7,8 +7,6 @@ SOURCE_BRANCH=$2
 DESTINATION_REPO=$3
 DESTINATION_BRANCH=$4
 GIT_USER=$5
-GIT_PASSWD=$6
-GIT_EMAIL=$7
 
 if ! echo $SOURCE_REPO | grep '.git'
 then
@@ -44,8 +42,7 @@ chmod 777 gen-files.sh
 ./gen-files.sh
 git add .
 git config --global user.name ${GIT_USER}
-# git config --global user.password ${GIT_PASSWD}
-git config --global user.email ${GIT_EMAIL}
+git config --global user.email "auto@silabs.com"
 git commit -a -m "gen links"
 
 
