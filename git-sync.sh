@@ -6,7 +6,6 @@ SOURCE_REPO=$1
 SOURCE_BRANCH=$2
 DESTINATION_REPO=$3
 DESTINATION_BRANCH=$4
-GIT_USER=$5
 
 if ! echo $SOURCE_REPO | grep '.git'
 then
@@ -41,7 +40,7 @@ git fetch source '+refs/heads/*:refs/heads/*' --update-head-ok
 chmod 777 gen-files.sh
 ./gen-files.sh
 git add .
-git config --global user.name ${GIT_USER}
+git config --global user.name "auto_user"
 git config --global user.email "auto@silabs.com"
 git commit -a -m "gen links"
 
